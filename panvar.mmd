@@ -1,0 +1,52 @@
+flowchart TD
+
+%% address the genotype data
+A[genotype data] --> B(Annotated?)
+
+B --"NO"--> C(Annotate with SnpEeff)
+
+C --> D[proceed to panvar]
+
+B --"YES"--> D
+
+%% address the phenotype data
+E[Phenotype data] --> D
+
+%% Moving on to PanvaR
+D --> F[panvar_func]
+
+G[Parameter: tag_SNP] --> H[User supplied?]
+
+T[Paramter: Annotation file] --> F
+
+H --"NO"--> I[Auto infer from GWAS]
+
+H --"YES"--> M[Use user supplied tag_SNP]
+
+I --> N --> F
+
+M --> F
+
+J[Parameter: Window span around tag_SNP, defaults to 500kb] --> F
+
+K[Parameter: R2 threshold, defaults to 0.6] --> F
+
+L[Paramter: SnpSift impact factors, defaults to HIGH, MODERATE] --> F
+
+F --> N[GWAS using bigStatsR and bigSnpR]
+
+F --> O[Subset genotype data around tag_SNP]
+
+O --> P[Calculate LD between tag_SNP and all other SNPs in the subset genotype]
+
+P --> Q[Filter R2 values against threshold]
+
+K --> Q
+
+Q --> R[Use SnpSift to filter for SNPs with specified impact factors]
+
+L --> R
+
+R --> S[Final table with SNPs that passed the filtering threshold]
+
+S --> U[Plot for the user]
